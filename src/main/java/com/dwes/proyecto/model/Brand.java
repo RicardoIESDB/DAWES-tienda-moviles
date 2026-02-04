@@ -12,15 +12,16 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "brands")
-
+// Brands = Marcas
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, unique = true)
     private String name;
     // 'mappedBy' indica que el dueño de la relación es el atributo "brand" en la clase Movil
     // cascade = CascadeType.ALL permite que si borras la marca, se borren sus móviles (coincidiendo con tu ON DELETE CASCADE del SQL)
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
-    private List<Movil> moviles;
+    private List<Mobile> mobiles;
 }

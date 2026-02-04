@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "moviles")
+@Table(name = "mobiles")
 
-public class Movil {
+public class Mobile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "model_name")
+    @Column(name = "model_name", nullable = false)
     private String modelName;
 
     @Column(nullable = false)
@@ -32,8 +32,12 @@ public class Movil {
     @Column(length = 200)
     private String description;
 
+    @Column(nullable = false)
+    private Integer discount;
+
+    // Relación con Brand
     @ManyToOne
     @JoinColumn(name = "brand_id")
-    @JsonIgnore
+    @JsonIgnore //Evita bucles infinitos al pedir la lista de marcas
     private Brand brand;
 }
