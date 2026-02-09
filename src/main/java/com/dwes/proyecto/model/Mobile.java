@@ -40,12 +40,12 @@ public class Mobile implements Serializable {
     @NotNull(message = "La RAM es obligatoria")
     @Min(value = 1, message = "La RAM debe ser al menos 1 GB")
     @Column(name = "ram_gb", nullable = false)
-    private Integer ramGB;
+    private Integer ramGb;
 
     @NotNull(message = "El almacenamiento es obligatorio")
     @Min(value = 1, message = "El almacenamiento debe ser al menos 1 GB")
     @Column(name = "storage_gb", nullable = false)
-    private Integer storageGB;
+    private Integer storageGb;
 
     @Size(max = 200, message = "La descripción no puede superar los 200 caracteres")
     @Column(length = 200)
