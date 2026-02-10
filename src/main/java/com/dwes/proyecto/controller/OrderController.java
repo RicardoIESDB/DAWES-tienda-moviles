@@ -2,6 +2,11 @@ package com.dwes.proyecto.controller;
 
 import com.dwes.proyecto.model.Order;
 import com.dwes.proyecto.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,20 +18,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Pedidos", description = "API para gestión de pedidos de compra")
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class OrderController {
+
     @Autowired
     private OrderService orderService;
 
     //CONSULTAS
 
+    @Operation(summary = "Obtener todos los pedidos", description = "Devuelve el historial completo de pedidos")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Pedidos obtenidos con éxito") })
     @GetMapping("/orders")
     public ResponseEntity<List<Order>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.findAll());
     }
 
+    @Operation(summary = "Obtener pedido por ID", description = "Busca un pedido específico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido encontrado"),
+            @ApiResponse(responseCode = "404", description = "Pedido no encontrado", content = @Content())
+    })
     @GetMapping("/orders/{id}")
     public ResponseEntity<Order> showById(@PathVariable Long id) {
         Order order = orderService.findById(id);
@@ -37,11 +51,13 @@ public class OrderController {
     }
 
     // Ver pedidos de un usuario específico
+    @Operation(summary = "Pedidos por Usuario", description = "Devuelve los pedidos realizados por un usuario concreto")
     @GetMapping("/orders/user/{userId}")
     public ResponseEntity<List<Order>> showByUser(@PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.findByUserId(userId));
     }
 
+    @Operation(summary = "Contar pedidos", description = "Devuelve el número total de pedidos")
     @GetMapping("/orders/count")
     public ResponseEntity<Map<String, Object>> count() {
         Map<String, Object> map = new HashMap<>();
@@ -51,10 +67,13 @@ public class OrderController {
                 .body(map);
     }
 
-    // ***************************************************************************
     // ACTUALIZACIONES
-    // ***************************************************************************
 
+    @Operation(summary = "Crear pedido", description = "Registra una nueva compra (requiere Usuario y Móvil)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Pedido creado"),
+            @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content())
+    })
     @PostMapping("/orders")
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody Order order) {
         ResponseEntity<Map<String, Object>> response;
@@ -96,6 +115,11 @@ public class OrderController {
         return response;
     }
 
+    @Operation(summary = "Actualizar pedido", description = "Modifica los datos de un pedido existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido actualizado"),
+            @ApiResponse(responseCode = "404", description = "Pedido no encontrado", content = @Content())
+    })
     @PutMapping("/orders")
     public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody Order order) {
         ResponseEntity<Map<String, Object>> response;
@@ -129,6 +153,7 @@ public class OrderController {
         return response;
     }
 
+    @Operation(summary = "Eliminar pedido", description = "Borra un pedido del sistema")
     @DeleteMapping("/orders/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         ResponseEntity<Map<String, Object>> response;

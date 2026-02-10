@@ -2,6 +2,11 @@ package com.dwes.proyecto.controller;
 
 import com.dwes.proyecto.model.User;
 import com.dwes.proyecto.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Tag(name = "Usuarios", description = "API para gestión de usuarios del sistema")
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
@@ -23,12 +28,19 @@ public class UserController {
     //CONSULTAS
 
     // GET: http://localhost:8080/mobile-store/api/users
+    @Operation(summary = "Obtener todos los usuarios", description = "Devuelve el listado completo de usuarios registrados")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Usuarios obtenidos con éxito") })
     @GetMapping("/users")
     public ResponseEntity<List<User>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
     // GET: http://localhost:8080/mobile-store/api/users/1
+    @Operation(summary = "Obtener usuario por ID", description = "Busca un usuario por su identificador")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content())
+    })
     @GetMapping("/users/{id}")
     public ResponseEntity<User> showById(@PathVariable Long id) {
         User user = userService.findById(id);
@@ -38,6 +50,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
+    @Operation(summary = "Contar usuarios", description = "Devuelve el número total de usuarios")
     @GetMapping("/users/count")
     public ResponseEntity<Map<String, Object>> count() {
         Map<String, Object> map = new HashMap<>();
@@ -47,11 +60,14 @@ public class UserController {
                 .body(map);
     }
 
-    // ***************************************************************************
     // ACTUALIZACIONES
-    // ***************************************************************************
 
     // POST: http://localhost:8080/mobile-store/api/users
+    @Operation(summary = "Crear usuario", description = "Registra un nuevo usuario en la base de datos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuario creado"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content())
+    })
     @PostMapping("/users")
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody User user) {
         ResponseEntity<Map<String, Object>> response;
@@ -95,6 +111,11 @@ public class UserController {
     }
 
     // PUT: http://localhost:8080/mobile-store/api/users
+    @Operation(summary = "Actualizar usuario", description = "Modifica los datos de un usuario existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content())
+    })
     @PutMapping("/users")
     public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody User user) {
         ResponseEntity<Map<String, Object>> response;
@@ -135,6 +156,7 @@ public class UserController {
     }
 
     // DELETE: http://localhost:8080/mobile-store/api/users/1
+    @Operation(summary = "Eliminar usuario", description = "Borra un usuario por su ID")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         ResponseEntity<Map<String, Object>> response;

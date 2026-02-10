@@ -2,6 +2,11 @@ package com.dwes.proyecto.controller;
 
 import com.dwes.proyecto.model.Mobile;
 import com.dwes.proyecto.service.MobileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,20 +18,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Móviles", description = "API para gestión de móviles")
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class MobileController {
+
     @Autowired
     private MobileService mobileService;
 
     //CONSULTAS
 
+    @Operation(summary = "Obtener todos los móviles", description = "Devuelve el listado de móviles")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Móviles obtenidos con éxito") })
     @GetMapping("/mobiles")
     public ResponseEntity<List<Mobile>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(mobileService.findAll());
     }
 
+    @Operation(summary = "Obtener móvil por ID", description = "Busca un móvil por su identificador")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Móvil encontrado"),
+            @ApiResponse(responseCode = "404", description = "Móvil no encontrado", content = @Content())
+    })
     @GetMapping("/mobiles/{id}")
     public ResponseEntity<Mobile> showById(@PathVariable Long id) {
         Mobile mobile = mobileService.findById(id);
@@ -37,11 +51,14 @@ public class MobileController {
     }
 
     // Buscar por marca (similar a showByDep)
+    @Operation(summary = "Obtener móviles por Marca", description = "Devuelve los móviles asociados a una marca específica")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Operación exitosa") })
     @GetMapping("/mobiles/brand/{brandId}")
     public ResponseEntity<List<Mobile>> showByBrand(@PathVariable Long brandId) {
         return ResponseEntity.status(HttpStatus.OK).body(mobileService.findByBrandId(brandId));
     }
 
+    @Operation(summary = "Contar móviles", description = "Devuelve el número total de móviles")
     @GetMapping("/mobiles/count")
     public ResponseEntity<Map<String, Object>> count() {
         Map<String, Object> map = new HashMap<>();
@@ -51,10 +68,13 @@ public class MobileController {
                 .body(map);
     }
 
-    // ***************************************************************************
     // ACTUALIZACIONES
-    // ***************************************************************************
 
+    @Operation(summary = "Crear móvil", description = "Añade un nuevo móvil al catálogo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Móvil creado"),
+            @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content())
+    })
     @PostMapping("/mobiles")
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody Mobile mobile) {
         ResponseEntity<Map<String, Object>> response;
@@ -91,6 +111,11 @@ public class MobileController {
         return response;
     }
 
+    @Operation(summary = "Actualizar móvil", description = "Actualiza los datos de un móvil existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Móvil actualizado"),
+            @ApiResponse(responseCode = "404", description = "Móvil no encontrado", content = @Content())
+    })
     @PutMapping("/mobiles")
     public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody Mobile mobile) {
         ResponseEntity<Map<String, Object>> response;
@@ -126,6 +151,11 @@ public class MobileController {
         return response;
     }
 
+    @Operation(summary = "Eliminar móvil", description = "Borra un móvil del sistema por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Móvil eliminado"),
+            @ApiResponse(responseCode = "404", description = "No encontrado", content = @Content())
+    })
     @DeleteMapping("/mobiles/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         ResponseEntity<Map<String, Object>> response;
@@ -146,12 +176,11 @@ public class MobileController {
         return response;
     }
 
-    // ***************************************************************************
     // OPERACIONES ESPECIALES
-    // ***************************************************************************
 
     // Asignar Marca (Equivalente a asignarDepartamento)
     // URL: http://localhost:8080/mobile-store/api/mobiles/1/asignar/brand/2
+    @Operation(summary = "Asignar marca", description = "Asocia una marca a un móvil existente")
     @PutMapping("/mobiles/{mobileId}/asignar/brand/{brandId}")
     public ResponseEntity<Map<String, Object>> asignarMarca(
             @PathVariable Long mobileId,
@@ -172,6 +201,7 @@ public class MobileController {
     }
 
     // Desasignar Marca
+    @Operation(summary = "Desasignar marca", description = "Elimina la asociación de marca de un móvil")
     @PutMapping("/mobiles/{mobileId}/desasignar/brand")
     public ResponseEntity<Map<String, Object>> desasignarMarca(@PathVariable Long mobileId) {
         Mobile mobile = mobileService.desasignarMarca(mobileId);
