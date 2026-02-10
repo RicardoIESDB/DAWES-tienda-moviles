@@ -27,7 +27,7 @@ INSERT INTO mobiles (id, model_name, price, ram_gb, storage_gb, description, dis
     (5, 'Redmi Note 13', 250.00, 8, 256, 'Calidad precio imbatible', 15, 3),
     (6, 'Pixel 8', 800.00, 8, 128, 'La experiencia Android pura', 0, 4);
 
-ALTER TABLE mobiles ALTER COLUMN id RESTART WITH 7;ç
+ALTER TABLE mobiles ALTER COLUMN id RESTART WITH 7;
 
 -- 4 PEDIDOS (Orders) - Relacionan Usuario y Móvil
 -- Usuario con ID 2 ('user') compró varios móviles
