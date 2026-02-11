@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user_security")
+@Table(name = "users_security")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
