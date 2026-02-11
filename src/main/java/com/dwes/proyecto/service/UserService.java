@@ -3,6 +3,7 @@ package com.dwes.proyecto.service;
 import com.dwes.proyecto.model.User;
 import com.dwes.proyecto.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +12,10 @@ import java.util.List;
 @Service
 public class UserService {
     @Autowired
-    public UserRepository userRepository;
+    private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     // ************************
     // CONSULTAS
     // ************************
@@ -43,6 +46,10 @@ public class UserService {
     @Transactional
     public User save(User user) {
         // En un futuro aquí encriptaríamos la contraseña con BCrypt
+        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")){
+            String contrasenaEncriptada = passwordEncoder.encode(user.getPassword());
+            user.setPassword(contrasenaEncriptada);
+        }
         return userRepository.save(user);
     }
 
@@ -62,7 +69,14 @@ public class UserService {
             user.setEmail(userDetails.getEmail());
         }
         if (userDetails.getPassword() != null) {
-            user.setPassword(userDetails.getPassword());
+            // Si la nueva contraseña NO empieza por $2a$ (no está encriptada), la encriptamos
+            if (!userDetails.getPassword().startsWith("$2a$")) {
+                String contrasenaEncriptada = passwordEncoder.encode(userDetails.getPassword());
+                user.setPassword(contrasenaEncriptada);
+            } else {
+                // Si por algún motivo ya venía encriptada, la guardamos tal cual
+                user.setPassword(userDetails.getPassword());
+            }
         }
 
         // Actualizamos roles
