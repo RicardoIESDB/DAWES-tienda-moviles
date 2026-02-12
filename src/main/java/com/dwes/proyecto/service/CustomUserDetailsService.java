@@ -41,6 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService{
         }
 
         // Devolvemos el objeto User de Spring Security con tus datos
+        System.out.println("LOGUEADO A: " + username + " | ROLES: "+ roles);
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),

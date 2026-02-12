@@ -45,7 +45,6 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        // En un futuro aquí encriptaríamos la contraseña con BCrypt
         if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")){
             String contrasenaEncriptada = passwordEncoder.encode(user.getPassword());
             user.setPassword(contrasenaEncriptada);
@@ -74,7 +73,7 @@ public class UserService {
                 String contrasenaEncriptada = passwordEncoder.encode(userDetails.getPassword());
                 user.setPassword(contrasenaEncriptada);
             } else {
-                // Si por algún motivo ya venía encriptada, la guardamos tal cual
+                // Si la contraseña estaba encriptada, la guardamos tal cual
                 user.setPassword(userDetails.getPassword());
             }
         }
