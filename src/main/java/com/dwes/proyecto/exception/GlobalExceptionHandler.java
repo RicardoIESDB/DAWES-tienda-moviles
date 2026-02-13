@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -192,6 +193,22 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @ExceptionHandler(MissingPathVariableException.class)
+    public ResponseEntity<Map<String, Object>> handleMissingPathVariable(
+            MissingPathVariableException ex, HttpServletRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", java.time.LocalDateTime.now());
+        response.put("status", 400);
+        response.put("error", "Bad Request - Missing or Invalid Path Variable");
+        response.put("message", "El parámetro de la URL '" + ex.getVariableName() + "' está vacío o es inválido.");
+        response.put("path", request.getRequestURI());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     private boolean isActually404Error(String message, String path) {
         if (message == null) return false;

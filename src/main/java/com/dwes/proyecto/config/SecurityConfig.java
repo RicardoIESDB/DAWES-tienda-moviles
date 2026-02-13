@@ -41,6 +41,8 @@ public class SecurityConfig {
 
                                 .requestMatchers("/api/auth/**").permitAll()
 
+                                .requestMatchers("/error").permitAll()
+
                                 // ZONA PROTEGIDA
 
                                 // Usuarios: Solo ADMIN

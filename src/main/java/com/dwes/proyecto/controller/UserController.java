@@ -1,5 +1,6 @@
 package com.dwes.proyecto.controller;
 
+import com.dwes.proyecto.exception.ResourceNotFoundException;
 import com.dwes.proyecto.model.User;
 import com.dwes.proyecto.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,9 +46,9 @@ public class UserController {
     public ResponseEntity<User> showById(@PathVariable Long id) {
         User user = userService.findById(id);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            throw new ResourceNotFoundException("Usuario no encontrado con el ID: " + id);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Contar usuarios", description = "Devuelve el número total de usuarios")

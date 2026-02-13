@@ -24,12 +24,12 @@ public class User implements Serializable {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @NotBlank
     @Email(message = "Debe ser un email válido")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotBlank
